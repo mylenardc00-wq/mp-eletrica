@@ -617,8 +617,8 @@ function DRE({orcs,onVoltar}){
 
   const getOrcsM=m=>orcs.filter(o=>{const d=new Date(o.criadoEm);return d.getMonth()===m&&d.getFullYear()===ano;});
   const receitaM=m=>getOrcsM(m).filter(o=>o.status==='Pago').reduce((s,o)=>s+(o.totalTaxa||0),0);
-  const matM=m=>getOrcsM(m).reduce((s,o)=>s+(o.ex?.mat||0)+(o.ex?.frete||0),0);
-  const combM=m=>getOrcsM(m).reduce((s,o)=>{const km=o.desl?.km||0,gas=o.desl?.gas||7,kml=o.desl?.kml||10,desg=o.desl?.desg||0.5,dias=o.desl?.dias||1;return s+(km>0?((km/kml)*gas+km*desg)*dias:0);},0);
+  const matM=m=>getOrcsM(m).filter(o=>o.status==='Pago').reduce((s,o)=>s+(o.ex?.mat||0)+(o.ex?.frete||0),0);
+  const combM=m=>getOrcsM(m).filter(o=>o.status==='Pago').reduce((s,o)=>{const km=o.desl?.km||0,gas=o.desl?.gas||7,kml=o.desl?.kml||10,desg=o.desl?.desg||0.5,dias=o.desl?.dias||1;return s+(km>0?((km/kml)*gas+km*desg)*dias:0);},0);
   const taxaM=m=>getOrcsM(m).reduce((s,o)=>{const t=PARCELAS.find(p=>p.label===(o.parcelas||'6x'))||PARCELAS[5];return s+(o.status==='Pago'?(o.total||0)*t.taxa:0);},0);
   const fixoM=()=>desp.reduce((s,d)=>s+(d.v||0),0);
   const lucroM=m=>receitaM(m)-matM(m)-combM(m)-taxaM(m)-fixoM();
